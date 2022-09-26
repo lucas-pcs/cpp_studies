@@ -1,0 +1,12 @@
+O jogo da adivinhação consiste em tentar adivinhar um número de 0 a 99.
+
+- Dificuldade:
+A dificuldade do jogo altera o número de tentativas que o usuário pode ter sendo modificadas da seguinte forma:
+Fácil: 5 tentativas
+Médio: 10 tentativas
+Difícil: 15 tentativas
+
+- Pontuação:
+O sistema de pontuação se inicia em 1000 pontos e penaliza usuários com base na diferença do número a ser adivinhado e o chute, sendo calculado da seguinte forma:
+Pontuação = 1000 - |Chute - Número a ser adivinhado| / 2
+
