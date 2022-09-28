@@ -1,27 +1,63 @@
 #include <iostream>
 #include <string>
+#include <map>
+#include <vector>
 
 using namespace std;
 
+// --- Variaveis
 const string PALAVRA_SECRETA = "MELANCIA";
-string caracteres_adivinhados(PALAVRA_SECRETA.size(),'_');
+const int NUMERO_DE_TENTATIVAS_MAXIMO = 12;
+int numero_de_tentativas=1;
+bool nao_enforcou = true;
+bool nao_acertou = true;
+char chute;
 
+/* string caracteres_adivinhados(PALAVRA_SECRETA.size(),'_'); */
 
+// -- Estrutura que irá conter se determinado caracter já foi chutado pelo usuário e não está contido na palavra
+vector<char> palavras_ja_chutadas;
 
+// -- Estrutura que irá conter se determinado caracter já foi chutado pelo usuário e está contido na palavra
+map<char,bool> chutou;
+
+void verifica_se_enforcou(){
+    if(numero_de_tentativas == NUMERO_DE_TENTATIVAS_MAXIMO + 1){
+        nao_enforcou = false;
+        cout << "Fim de jogo, você enforcou!" << endl;
+    }
+}
+
+void verifica_se_acertou(){
+    for(char letra : PALAVRA_SECRETA){
+        if(!chutou[letra]){
+            return;
+        }
+    }
+    nao_acertou = false;
+    cout << "Fim de jogo, você acertou!" << endl;
+}
+
+// --- Retorna true se o chute está contido na palavra e false caso contrário.
 bool verifica_chute(char chute){
-    bool verifica = false;
-    int i = 0;
+    for(char letra : PALAVRA_SECRETA){
+        if(letra == chute){
+            return true;
+        }
+    }
+    return false;
 
-    // --- Verifica também no caso de palavras repetidas
-    while(i < PALAVRA_SECRETA.size()){
+/*     bool verifica = false;
+    int i = 0;
+    // --- Verifica e constroi a palavra adivinhada até o momento
+     while(i < PALAVRA_SECRETA.size()){
         if(chute == PALAVRA_SECRETA[i]){
             caracteres_adivinhados[i] = chute;
             verifica = true;
         }
         i = i + 1;
-    }
-
-    return verifica;
+    } 
+    return verifica; */
 
     /* loop usando novo for do c++11, não printa na tela o estado atual da palavra a ser adivinhada e nem contempla o caso de palavras repetidas
     for(char interador : PALAVRA_SECRETA){
@@ -33,40 +69,90 @@ bool verifica_chute(char chute){
     */
 }
 
-int main(){
+// --- Adiciona o chute no vetor de chutes, que será usado para imprimir a palavra e os erros
+void chuta(){
+    cout << "Digite seu chute: ";
 
-    cout << caracteres_adivinhados << endl;
+    char chute;
+    cin >> chute;
+    numero_de_tentativas += 1;
 
+    if(verifica_chute(chute)){
+        chutou[chute] = true;
+        cout << "Seu chute está contido na palavra secreta" << endl;
+    }
+    else{
+        palavras_ja_chutadas.push_back(chute);
+        cout << "Seu chute não está contido na palavra secreta" << endl;
+    }
+}
+
+void imprime_palavra(){
+    cout << "Palavra Secreta: ";
+    for(char letra : PALAVRA_SECRETA){
+        if(chutou[letra]){
+            cout << letra << " ";
+        }
+        else{
+            cout << "_" << " ";
+        }
+    }
+    cout << endl;
+}
+
+void imprime_erros(){
+    cout << "Palavras já chutadas: ";
+    for(char letra : palavras_ja_chutadas){
+        cout << letra << " ";
+    }
+    cout << endl;
+}
+
+void imprime_tentativa(){
+    cout << "Tentativa: " << numero_de_tentativas << endl;
+}
+
+void imprime_inicio(){
     cout << "**************************************" << endl;
     cout << "***** Bem vindo ao jogo da forca *****" << endl;
     cout << "**************************************" << endl;
+    cout << endl;
+}
 
-    bool nao_enforcou = true;
-    bool nao_acertou = true;
-    char chute;
-    const int NUMERO_DE_TENTATIVAS_MAXIMO = 10;
-    int numero_de_tentativas=1;
+int main(){
+
+    imprime_inicio();
 
     while(nao_enforcou && nao_acertou){
-        cout << "Tentativa: " << numero_de_tentativas << " Digite seu chute: ";
+
+        imprime_tentativa();
+        chuta();
+        imprime_palavra();
+        imprime_erros();
+        verifica_se_acertou();
+        verifica_se_enforcou();
+        cout << endl;
+
+
+/*         cout << "Tentativa: " << numero_de_tentativas << " Digite seu chute: ";
 
         cin >> chute;
         numero_de_tentativas += 1;
         
         cout << endl;
-        cout << "Seu chute foi: " << chute << endl;
+        cout << "Seu chute foi: " << chute << endl; */
         
-        if(verifica_chute(chute)){
+/*         if(verifica_chute(chute)){
             cout << "Seu chute está contido na palavra secreta" << endl;
-            cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
+            // cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
         }
         else{
             cout << "Seu chute não está contido na palavra secreta" << endl;
-            cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
+            // cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
         }
-        cout << endl;
+        cout << endl; */
 
-        // -- Verifica se o usuário acertou todos os caracteres da palavra
+/*         // -- Verifica se o usuário acertou todos os caracteres da palavra
         nao_acertou = false;
         for(char iterador : caracteres_adivinhados){
             if(iterador == '_'){
@@ -76,13 +162,7 @@ int main(){
         }
         if(nao_acertou == false){
             cout << "Fim de jogo, você acertou a palavra, parabens!" << endl;
-        }
-
-        // -- Verifica se o usuário enforcou
-        if(numero_de_tentativas == NUMERO_DE_TENTATIVAS_MAXIMO + 1){
-            nao_enforcou = false;
-            cout << "Fim de jogo, você enforcou!" << endl;
-        }
+        } */
     }
 
     return 0;
