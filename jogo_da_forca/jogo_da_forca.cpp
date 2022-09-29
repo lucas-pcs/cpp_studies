@@ -127,6 +127,11 @@ vector<string> le_arquivo(){
     ifstream arquivo;
     arquivo.open("palavras.txt");
 
+    if(!arquivo.is_open()){
+        cout << "Não foi possível acessar o banco de palavras." << endl;
+        exit(0);
+    }
+
     int numero_de_palavras;
     arquivo >> numero_de_palavras;
     cout << "O número de palavras no arquivo é: " << numero_de_palavras << endl;
@@ -145,6 +150,7 @@ vector<string> le_arquivo(){
         cout << palavras[i] << endl;
     }
 
+    arquivo.close();
     return palavras;
 }
 
