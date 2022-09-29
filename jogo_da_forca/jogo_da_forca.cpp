@@ -3,18 +3,20 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
 // --- Variaveis
-string PALAVRA_SECRETA;
+string palavra_secreta;
 const int NUMERO_DE_TENTATIVAS_MAXIMO = 12;
 int numero_de_tentativas=1;
 bool nao_enforcou = true;
 bool nao_acertou = true;
 char chute;
 
-/* string caracteres_adivinhados(PALAVRA_SECRETA.size(),'_'); */
+/* string caracteres_adivinhados(palavra_secreta.size(),'_'); */
 
 // -- Estrutura que irá conter se determinado caracter já foi chutado pelo usuário e não está contido na palavra
 vector<char> palavras_ja_chutadas;
@@ -30,7 +32,7 @@ void verifica_se_enforcou(){
 }
 
 void verifica_se_acertou(){
-    for(char letra : PALAVRA_SECRETA){
+    for(char letra : palavra_secreta){
         if(!chutou[letra]){
             return;
         }
@@ -41,7 +43,7 @@ void verifica_se_acertou(){
 
 // --- Retorna true se o chute está contido na palavra e false caso contrário.
 bool verifica_chute(char chute){
-    for(char letra : PALAVRA_SECRETA){
+    for(char letra : palavra_secreta){
         if(letra == chute){
             return true;
         }
@@ -51,8 +53,8 @@ bool verifica_chute(char chute){
 /*     bool verifica = false;
     int i = 0;
     // --- Verifica e constroi a palavra adivinhada até o momento
-     while(i < PALAVRA_SECRETA.size()){
-        if(chute == PALAVRA_SECRETA[i]){
+     while(i < palavra_secreta.size()){
+        if(chute == palavra_secreta[i]){
             caracteres_adivinhados[i] = chute;
             verifica = true;
         }
@@ -61,7 +63,7 @@ bool verifica_chute(char chute){
     return verifica; */
 
     /* loop usando novo for do c++11, não printa na tela o estado atual da palavra a ser adivinhada e nem contempla o caso de palavras repetidas
-    for(char interador : PALAVRA_SECRETA){
+    for(char interador : palavra_secreta){
         if(chute == interador){
             return true;
         }
@@ -90,7 +92,7 @@ void chuta(){
 
 void imprime_palavra(){
     cout << "Palavra Secreta: ";
-    for(char letra : PALAVRA_SECRETA){
+    for(char letra : palavra_secreta){
         if(chutou[letra]){
             cout << letra << " ";
         }
@@ -146,11 +148,17 @@ vector<string> le_arquivo(){
     return palavras;
 }
 
+void sorteia_palavra(){
+    vector<string> palavras = le_arquivo();
+    srand(time(NULL));
+    int indice_sorteado = rand() % palavras.size();
+    palavra_secreta = palavras[indice_sorteado];
+}
+
 int main(){
 
     imprime_inicio();
-
-    le_arquivo();
+    sorteia_palavra();
 
     while(nao_enforcou && nao_acertou){
 
