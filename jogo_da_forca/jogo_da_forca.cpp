@@ -2,11 +2,12 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
 // --- Variaveis
-const string PALAVRA_SECRETA = "MELANCIA";
+string PALAVRA_SECRETA;
 const int NUMERO_DE_TENTATIVAS_MAXIMO = 12;
 int numero_de_tentativas=1;
 bool nao_enforcou = true;
@@ -119,9 +120,37 @@ void imprime_inicio(){
     cout << endl;
 }
 
+// --- lendo o arquivo de texto que irá conter todas as palavras disponíveis para o jogo
+vector<string> le_arquivo(){
+    ifstream arquivo;
+    arquivo.open("palavras.txt");
+
+    int numero_de_palavras;
+    arquivo >> numero_de_palavras;
+    cout << "O número de palavras no arquivo é: " << numero_de_palavras << endl;
+
+/*     ifstream arquivo = ifstream("palavras.txt");
+    int numero_de_palavras;
+    arquivo >> numero_de_palavras;
+    cout << numero_de_palavras << endl; */
+
+    vector<string> palavras;
+    string palavra_lida;
+
+    for(int i = 0; i < numero_de_palavras; i++){
+        arquivo >> palavra_lida;
+        palavras.push_back(palavra_lida);
+        cout << palavras[i] << endl;
+    }
+
+    return palavras;
+}
+
 int main(){
 
     imprime_inicio();
+
+    le_arquivo();
 
     while(nao_enforcou && nao_acertou){
 
