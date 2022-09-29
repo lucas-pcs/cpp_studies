@@ -30,6 +30,62 @@ void verifica_se_enforcou(){
         cout << "Fim de jogo, você enforcou!" << endl;
     }
 }
+// --- lendo o arquivo de texto que irá conter todas as palavras disponíveis para o jogo
+vector<string> le_arquivo(){
+    ifstream arquivo;
+    arquivo.open("palavras.txt");
+
+    if(!arquivo.is_open()){
+        cout << "Não foi possível acessar o banco de palavras." << endl;
+        exit(0);
+    }
+
+    int numero_de_palavras;
+    arquivo >> numero_de_palavras;
+    // cout << "O número de palavras no arquivo é: " << numero_de_palavras << endl;
+
+/*     ifstream arquivo = ifstream("palavras.txt");
+    int numero_de_palavras;
+    arquivo >> numero_de_palavras;
+    cout << numero_de_palavras << endl; */
+
+    vector<string> palavras;
+    string palavra_lida;
+
+    for(int i = 0; i < numero_de_palavras; i++){
+        arquivo >> palavra_lida;
+        palavras.push_back(palavra_lida);
+        // cout << palavras[i] << endl;
+    }
+
+    arquivo.close();
+    return palavras;
+}
+
+void adiciona_palavra(){
+    cout << "Digite a palavra a ser adicionada, em letras maiusculas" << endl;
+    string palavra_a_ser_adicionada;
+    cin >> palavra_a_ser_adicionada;
+
+    vector<string> palavras = le_arquivo();
+    palavras.push_back(palavra_a_ser_adicionada);
+
+    ofstream arquivo;
+    arquivo.open("palavras.txt");
+
+    if(!arquivo.is_open()){
+        cout << "Não foi possível encontrar o banco de palavras" << endl;
+        exit(0);
+    }
+
+    arquivo << palavras.size() << endl;
+
+    for(string palavra : palavras){
+        arquivo << palavra << endl;
+    }
+
+    arquivo.close();
+}
 
 void verifica_se_acertou(){
     for(char letra : palavra_secreta){
@@ -39,6 +95,12 @@ void verifica_se_acertou(){
     }
     nao_acertou = false;
     cout << "Fim de jogo, você acertou!" << endl;
+    cout << "Você deseja adicionar uma palavra ao banco de palavras ? (S/N): ";
+    char opcao;
+    cin >> opcao;
+    if(opcao == 'S'){
+        adiciona_palavra();
+    }
 }
 
 // --- Retorna true se o chute está contido na palavra e false caso contrário.
@@ -120,38 +182,6 @@ void imprime_inicio(){
     cout << "***** Bem vindo ao jogo da forca *****" << endl;
     cout << "**************************************" << endl;
     cout << endl;
-}
-
-// --- lendo o arquivo de texto que irá conter todas as palavras disponíveis para o jogo
-vector<string> le_arquivo(){
-    ifstream arquivo;
-    arquivo.open("palavras.txt");
-
-    if(!arquivo.is_open()){
-        cout << "Não foi possível acessar o banco de palavras." << endl;
-        exit(0);
-    }
-
-    int numero_de_palavras;
-    arquivo >> numero_de_palavras;
-    cout << "O número de palavras no arquivo é: " << numero_de_palavras << endl;
-
-/*     ifstream arquivo = ifstream("palavras.txt");
-    int numero_de_palavras;
-    arquivo >> numero_de_palavras;
-    cout << numero_de_palavras << endl; */
-
-    vector<string> palavras;
-    string palavra_lida;
-
-    for(int i = 0; i < numero_de_palavras; i++){
-        arquivo >> palavra_lida;
-        palavras.push_back(palavra_lida);
-        cout << palavras[i] << endl;
-    }
-
-    arquivo.close();
-    return palavras;
 }
 
 void sorteia_palavra(){
