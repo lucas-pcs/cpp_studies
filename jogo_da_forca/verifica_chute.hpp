@@ -1,0 +1,1 @@
+bool verifica_chute(char chute);

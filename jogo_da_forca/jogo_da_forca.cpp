@@ -6,190 +6,29 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "le_arquivo.hpp"
+#include "imprime_inicio.hpp"
+#include "verifica_se_enforcou_ou_acertou.hpp"
+#include "imprime_palavra_erros_tentativa.hpp"
+#include "chuta.hpp"
+#include "sorteia_palavra.hpp"
+#include "adiciona_palavra.hpp"
+
 using namespace std;
 
 // --- Variaveis
 string palavra_secreta;
 const int NUMERO_DE_TENTATIVAS_MAXIMO = 12;
-int numero_de_tentativas=1;
+int numero_de_tentativas = 1;
 bool nao_enforcou = true;
 bool nao_acertou = true;
 char chute;
-
-/* string caracteres_adivinhados(palavra_secreta.size(),'_'); */
 
 // -- Estrutura que irá conter se determinado caracter já foi chutado pelo usuário e não está contido na palavra
 vector<char> palavras_ja_chutadas;
 
 // -- Estrutura que irá conter se determinado caracter já foi chutado pelo usuário e está contido na palavra
 map<char,bool> chutou;
-
-void verifica_se_enforcou(){
-    if(numero_de_tentativas == NUMERO_DE_TENTATIVAS_MAXIMO + 1){
-        nao_enforcou = false;
-        cout << "Fim de jogo, você enforcou!" << endl;
-    }
-}
-// --- lendo o arquivo de texto que irá conter todas as palavras disponíveis para o jogo
-vector<string> le_arquivo(){
-    ifstream arquivo;
-    arquivo.open("palavras.txt");
-
-    if(!arquivo.is_open()){
-        cout << "Não foi possível acessar o banco de palavras." << endl;
-        exit(0);
-    }
-
-    int numero_de_palavras;
-    arquivo >> numero_de_palavras;
-    // cout << "O número de palavras no arquivo é: " << numero_de_palavras << endl;
-
-/*     ifstream arquivo = ifstream("palavras.txt");
-    int numero_de_palavras;
-    arquivo >> numero_de_palavras;
-    cout << numero_de_palavras << endl; */
-
-    vector<string> palavras;
-    string palavra_lida;
-
-    for(int i = 0; i < numero_de_palavras; i++){
-        arquivo >> palavra_lida;
-        palavras.push_back(palavra_lida);
-        // cout << palavras[i] << endl;
-    }
-
-    arquivo.close();
-    return palavras;
-}
-
-void adiciona_palavra(){
-    cout << "Digite a palavra a ser adicionada, em letras maiusculas" << endl;
-    string palavra_a_ser_adicionada;
-    cin >> palavra_a_ser_adicionada;
-
-    vector<string> palavras = le_arquivo();
-    palavras.push_back(palavra_a_ser_adicionada);
-
-    ofstream arquivo;
-    arquivo.open("palavras.txt");
-
-    if(!arquivo.is_open()){
-        cout << "Não foi possível encontrar o banco de palavras" << endl;
-        exit(0);
-    }
-
-    arquivo << palavras.size() << endl;
-
-    for(string palavra : palavras){
-        arquivo << palavra << endl;
-    }
-
-    arquivo.close();
-}
-
-void verifica_se_acertou(){
-    for(char letra : palavra_secreta){
-        if(!chutou[letra]){
-            return;
-        }
-    }
-    nao_acertou = false;
-    cout << "Fim de jogo, você acertou!" << endl;
-    cout << "Você deseja adicionar uma palavra ao banco de palavras ? (S/N): ";
-    char opcao;
-    cin >> opcao;
-    if(opcao == 'S'){
-        adiciona_palavra();
-    }
-}
-
-// --- Retorna true se o chute está contido na palavra e false caso contrário.
-bool verifica_chute(char chute){
-    for(char letra : palavra_secreta){
-        if(letra == chute){
-            return true;
-        }
-    }
-    return false;
-
-/*     bool verifica = false;
-    int i = 0;
-    // --- Verifica e constroi a palavra adivinhada até o momento
-     while(i < palavra_secreta.size()){
-        if(chute == palavra_secreta[i]){
-            caracteres_adivinhados[i] = chute;
-            verifica = true;
-        }
-        i = i + 1;
-    } 
-    return verifica; */
-
-    /* loop usando novo for do c++11, não printa na tela o estado atual da palavra a ser adivinhada e nem contempla o caso de palavras repetidas
-    for(char interador : palavra_secreta){
-        if(chute == interador){
-            return true;
-        }
-    }
-    return false;
-    */
-}
-
-// --- Adiciona o chute no vetor de chutes, que será usado para imprimir a palavra e os erros
-void chuta(){
-    cout << "Digite seu chute: ";
-
-    char chute;
-    cin >> chute;
-    numero_de_tentativas += 1;
-
-    if(verifica_chute(chute)){
-        chutou[chute] = true;
-        cout << "Seu chute está contido na palavra secreta" << endl;
-    }
-    else{
-        palavras_ja_chutadas.push_back(chute);
-        cout << "Seu chute não está contido na palavra secreta" << endl;
-    }
-}
-
-void imprime_palavra(){
-    cout << "Palavra Secreta: ";
-    for(char letra : palavra_secreta){
-        if(chutou[letra]){
-            cout << letra << " ";
-        }
-        else{
-            cout << "_" << " ";
-        }
-    }
-    cout << endl;
-}
-
-void imprime_erros(){
-    cout << "Palavras já chutadas: ";
-    for(char letra : palavras_ja_chutadas){
-        cout << letra << " ";
-    }
-    cout << endl;
-}
-
-void imprime_tentativa(){
-    cout << "Tentativa: " << numero_de_tentativas << endl;
-}
-
-void imprime_inicio(){
-    cout << "**************************************" << endl;
-    cout << "***** Bem vindo ao jogo da forca *****" << endl;
-    cout << "**************************************" << endl;
-    cout << endl;
-}
-
-void sorteia_palavra(){
-    vector<string> palavras = le_arquivo();
-    srand(time(NULL));
-    int indice_sorteado = rand() % palavras.size();
-    palavra_secreta = palavras[indice_sorteado];
-}
 
 int main(){
 
@@ -206,36 +45,6 @@ int main(){
         verifica_se_enforcou();
         cout << endl;
 
-
-/*         cout << "Tentativa: " << numero_de_tentativas << " Digite seu chute: ";
-
-        cin >> chute;
-        numero_de_tentativas += 1;
-        
-        cout << endl;
-        cout << "Seu chute foi: " << chute << endl; */
-        
-/*         if(verifica_chute(chute)){
-            cout << "Seu chute está contido na palavra secreta" << endl;
-            // cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
-        }
-        else{
-            cout << "Seu chute não está contido na palavra secreta" << endl;
-            // cout << "Os caracteres adivinhados até agora foram: " << caracteres_adivinhados << endl;
-        }
-        cout << endl; */
-
-/*         // -- Verifica se o usuário acertou todos os caracteres da palavra
-        nao_acertou = false;
-        for(char iterador : caracteres_adivinhados){
-            if(iterador == '_'){
-                nao_acertou = true;
-                break;
-            }
-        }
-        if(nao_acertou == false){
-            cout << "Fim de jogo, você acertou a palavra, parabens!" << endl;
-        } */
     }
 
     return 0;
